@@ -1,1 +1,1612 @@
-# repository
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PwC Demo - Controllerprogrammet 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #000;
+        }
+
+        /* TOP NAV */
+        .topbar {
+            background-color: #FE7C39;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            height: 56px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .topbar-logo {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .topbar-logo .logo-main {
+            font-family: Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .topbar-logo .logo-sub {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: white;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+        }
+
+        .topbar-right .user-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            color: #FE7C39;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 0;
+        }
+
+        .topbar-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            transition: background 0.2s;
+        }
+
+        .topbar-nav a:hover, .topbar-nav a.active {
+            background: rgba(0,0,0,0.15);
+        }
+
+        /* SIDEBAR */
+        .layout {
+            display: flex;
+            margin-top: 56px;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #000;
+            min-height: calc(100vh - 56px);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            padding: 20px 0;
+        }
+
+        .sidebar-section {
+            padding: 10px 20px 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666;
+            font-family: Arial, sans-serif;
+            margin-top: 8px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(254, 124, 57, 0.15);
+            color: white;
+            border-left: 3px solid #FE7C39;
+        }
+
+        .sidebar a .icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-family: Georgia, serif;
+            font-size: 24px;
+            color: #000;
+        }
+
+        .page-header p {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .btn {
+            padding: 9px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #FE7C39;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e56a28;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #000;
+            border: 1px solid #ccc;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 3px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #FE7C39;
+            transition: transform 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-card.black { border-left-color: #000; }
+        .kpi-card.light { border-left-color: #ccc; }
+
+        .kpi-label {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-family: Georgia, serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+            margin: 6px 0;
+        }
+
+        .kpi-change {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #FE7C39;
+        }
+
+        .kpi-change.down {
+            color: #000;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 2px solid #FE7C39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-family: Georgia, serif;
+            font-size: 15px;
+            color: #000;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+        }
+
+        th {
+            background: #000;
+            color: white;
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: Arial, sans-serif;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #000;
+            font-family: Arial, sans-serif;
+        }
+
+        tr:hover td {
+            background: #fff8f4;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* STATUS BADGES */
+        .badge {
+            padding: 3px 10px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-success {
+            background: #FE7C39;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #000;
+            color: white;
+        }
+
+        .badge-danger {
+            background: white;
+            color: #000;
+            border: 1px solid #000;
+        }
+
+        .badge-info {
+            background: #f5f5f5;
+            color: #000;
+            border: 1px solid #ccc;
+        }
+
+        /* TWO COLUMN */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar {
+            background: #eee;
+            border-radius: 2px;
+            height: 8px;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: #FE7C39;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.black { background: #000; }
+        .progress-fill.light { background: #ccc; }
+
+        /* CHART BARS */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            height: 160px;
+            padding: 10px 0;
+        }
+
+        .chart-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: #FE7C39;
+            border-radius: 2px 2px 0 0;
+            transition: height 0.5s ease;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.75;
+        }
+
+        .chart-bar.black { background: #000; }
+        .chart-bar.light { background: #ccc; }
+
+        .chart-label {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        /* FORM */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #000;
+            font-weight: 700;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #FE7C39;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 3px;
+            width: 560px;
+            max-width: 95%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 2px solid #FE7C39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000;
+        }
+
+        .modal-header h3 {
+            font-family: Georgia, serif;
+            font-size: 16px;
+            color: white;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 22px;
+            color: white;
+            background: none;
+            border: none;
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #f5f5f5;
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #FE7C39;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 3000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #FE7C39;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            background: white;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: white;
+            background: #FE7C39;
+            font-weight: 700;
+        }
+
+        .tab:hover:not(.active) {
+            background: #f5f5f5;
+            color: #000;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* SEARCH */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 9px 15px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #FE7C39;
+        }
+
+        .search-bar select {
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb span {
+            color: #FE7C39;
+            font-weight: 700;
+        }
+
+        /* DIVIDER */
+        .section-divider {
+            border: none;
+            border-top: 2px solid #FE7C39;
+            margin: 20px 0;
+        }
+
+        /* REPORT CARDS */
+        .report-card {
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 4px solid #FE7C39;
+        }
+
+        .report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 1024px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div style="display:flex; align-items:center; gap:30px;">
+        <div class="topbar-logo">
+            <span class="logo-main">PwC Demo</span>
+            <span class="logo-sub">Controllerprogrammet 2026</span>
+        </div>
+        <div class="topbar-nav">
+            <a href="#" onclick="showPage('dashboard')" class="active" id="nav-dashboard">Hem</a>
+            <a href="#" onclick="showPage('ekonomi')" id="nav-ekonomi">Ekonomi</a>
+            <a href="#" onclick="showPage('kunder')" id="nav-kunder">Kunder</a>
+            <a href="#" onclick="showPage('projekt')" id="nav-projekt">Projekt</a>
+            <a href="#" onclick="showPage('rapporter')" id="nav-rapporter">Rapporter</a>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <span style="color:white;">🔔</span>
+        <span style="color:white;">Räkenskapsår: 2024</span>
+        <div class="user-icon">AJ</div>
+        <span style="color:white; font-size:12px;">Anna Johansson</span>
+    </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-section">Ekonomi</div>
+        <a onclick="showPage('dashboard')" id="side-dashboard" class="active">
+            <span class="icon">📊</span> Dashboard
+        </a>
+        <a onclick="showPage('ekonomi')" id="side-ekonomi">
+            <span class="icon">💰</span> Redovisning
+        </a>
+        <a onclick="showPage('fakturor')" id="side-fakturor">
+            <span class="icon">🧾</span> Fakturor
+        </a>
+        <a onclick="showPage('budget')" id="side-budget">
+            <span class="icon">📈</span> Budget
+        </a>
+
+        <div class="sidebar-section">CRM</div>
+        <a onclick="showPage('kunder')" id="side-kunder">
+            <span class="icon">👥</span> Kunder
+        </a>
+        <a onclick="showPage('projekt')" id="side-projekt">
+            <span class="icon">📁</span> Projekt
+        </a>
+
+        <div class="sidebar-section">Analys</div>
+        <a onclick="showPage('rapporter')" id="side-rapporter">
+            <span class="icon">📋</span> Rapporter
+        </a>
+        <a onclick="showPage('analys')" id="side-analys">
+            <span class="icon">🔍</span> Analys
+        </a>
+
+        <div class="sidebar-section">System</div>
+        <a onclick="showPage('installningar')" id="side-installningar">
+            <span class="icon">⚙️</span> Inställningar
+        </a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+        <!-- ===================== DASHBOARD ===================== -->
+        <div class="page active" id="page-dashboard">
+            <div class="breadcrumb">PwC Demo › <span>Dashboard</span></div>
+            <div class="page-header">
+                <div>
+                    <h1>Välkommen, Anna 👋</h1>
+                    <p>Senast inloggad: idag 08:32 &nbsp;|&nbsp; Räkenskapsår 2024</p>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-secondary">Exportera</button>
+                    <button class="btn btn-primary" onclick="openModal('newOrderModal')">+ Ny order</button>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total omsättning (YTD)</div>
+                    <div class="kpi-value">4 872 500 kr</div>
+                    <div class="kpi-change">↑ +12,4% vs föregående år</div>
+                </div>
+                <div class="kpi-card black">
+                    <div class="kpi-label">Ingående order</div>
+                    <div class="kpi-value">1 234 000 kr</div>
+                    <div class="kpi-change">↑ +8,1% vs föregående månad</div>
+                </div>
+                <div class="kpi-card light">
+                    <div class="kpi-label">Utestående fakturor</div>
+                    <div class="kpi-value">386 750 kr</div>
+                    <div class="kpi-change down">↑ +3 st förfallna</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Aktiva projekt</div>
+                    <div class="kpi-value">14 st</div>
+                    <div class="kpi-change">3 avslutas denna månad</div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Månatlig omsättning 2024</h3>
+                        <select style="font-size:12px; border:1px solid #ccc; padding:4px 8px; border-radius:2px; font-family:Arial,sans-serif;">
+                            <option>2024</option>
+                            <option>2023</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:80px"></div>
+                                <div class="chart-label">Jan</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:95px"></div>
+                                <div class="chart-label">Feb</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:110px"></div>
+                                <div class="chart-label">Mar</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:130px"></div>
+                                <div class="chart-label">Apr</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:115px"></div>
+                                <div class="chart-label">Maj</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:140px"></div>
+                                <div class="chart-label">Jun</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:100px"></div>
+                                <div class="chart-label">Jul</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:125px"></div>
+                                <div class="chart-label">Aug</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:145px"></div>
+                                <div class="chart-label">Sep</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:155px"></div>
+                                <div class="chart-label">Okt</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar black" style="height:135px"></div>
+                                <div class="chart-label">Nov</div>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height:120px"></div>
+                                <div class="chart-label">Dec</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Toppkunder 2024</h3>
+                        <a href="#" onclick="showPage('kunder')" style="font-size:12px; color:#FE7C39; font-family:Arial,sans-serif; font-weight:700;">Visa alla →</a>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom:16px;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;margin-bottom:5px;">
+                                <span>Kund 1 – Nordex AB</span>
+                                <strong>1 840 000 kr</strong>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;margin-bottom:5px;">
+                                <span>Kund 2 – Stellar Group</span>
+                                <strong>1 240 000 kr</strong>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill black" style="width:58%"></div></div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;margin-bottom:5px;">
+                                <span>Kund 3 – Apex Consulting</span>
+                                <strong>890 000 kr</strong>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:41%"></div></div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;margin-bottom:5px;">
+                                <span>Kund 4 – Vega Solutions</span>
+                                <strong>502 500 kr</strong>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill light" style="width:23%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Senaste aktivitet</h3>
+                    <button class="btn btn-secondary" style="font-size:12px;">Uppdatera</button>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Typ</th>
+                                <th>Kund</th>
+                                <th>Beskrivning</th>
+                                <th>Belopp</th>
+                                <th>Status</th>
+                                <th>Åtgärd</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-11-12</td>
+                                <td><span class="badge badge-info">Faktura</span></td>
+                                <td>Kund 1 – Nordex AB</td>
+                                <td>Konsulttjänster Q4</td>
+                                <td><strong>245 000 kr</strong></td>
+                                <td><span class="badge badge-success">Betald</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td>
+                            </tr>
+                            <tr>
+                                <td>2024-11-10</td>
+                                <td><span class="badge badge-info">Order</span></td>
+                                <td>Kund 2 – Stellar Group</td>
+                                <td>Systemintegration fas 2</td>
+                                <td><strong>380 000 kr</strong></td>
+                                <td><span class="badge badge-warning">Pågående</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td>
+                            </tr>
+                            <tr>
+                                <td>2024-11-08</td>
+                                <td><span class="badge badge-info">Faktura</span></td>
+                                <td>Kund 3 – Apex Consulting</td>
+                                <td>Årsavtal support</td>
+                                <td><strong>98 500 kr</strong></td>
+                                <td><span class="badge badge-danger">Förfallen</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td>
+                            </tr>
+                            <tr>
+                                <td>2024-11-05</td>
+                                <td><span class="badge badge-info">Order</span></td>
+                                <td>Kund 1 – Nordex AB</td>
+                                <td>Workshop digitalisering</td>
+                                <td><strong>55 000 kr</strong></td>
+                                <td><span class="badge badge-success">Klar</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== EKONOMI ===================== -->
+        <div class="page" id="page-ekonomi">
+            <div class="breadcrumb">PwC Demo › <span>Redovisning</span></div>
+            <div class="page-header">
+                <div><h1>Redovisning</h1><p>Resultat- och balansräkning</p></div>
+                <button class="btn btn-primary">Exportera till Excel</button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(this, 'tab-resultat')">Resultaträkning</div>
+                <div class="tab" onclick="switchTab(this, 'tab-balans')">Balansräkning</div>
+                <div class="tab" onclick="switchTab(this, 'tab-kassaflode')">Kassaflöde</div>
+            </div>
+
+            <div class="tab-content active" id="tab-resultat">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Resultaträkning – Jan–Nov 2024</h3>
+                        <span style="font-size:12px;color:#666;font-family:Arial,sans-serif;">Belopp i SEK</span>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Konto</th>
+                                    <th>Benämning</th>
+                                    <th>Budget 2024</th>
+                                    <th>Utfall YTD</th>
+                                    <th>Avvikelse</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background:#fff8f4;">
+                                    <td colspan="6" style="color:#FE7C39;font-weight:700;font-family:Arial,sans-serif;text-transform:uppercase;font-size:11px;letter-spacing:1px;">Intäkter</td>
+                                </tr>
+                                <tr>
+                                    <td>3000</td><td>Nettoomsättning</td>
+                                    <td>5 000 000</td><td>4 872 500</td>
+                                    <td style="color:#FE7C39;">-127 500</td><td>97,5%</td>
+                                </tr>
+                                <tr>
+                                    <td>3900</td><td>Övriga intäkter</td>
+                                    <td>50 000</td><td>62 300</td>
+                                    <td style="color:#FE7C39;">+12 300</td><td>124,6%</td>
+                                </tr>
+                                <tr style="background:#fff8f4;font-weight:700;">
+                                    <td></td><td>Summa intäkter</td>
+                                    <td>5 050 000</td><td>4 934 800</td>
+                                    <td style="color:#FE7C39;">-115 200</td><td>97,7%</td>
+                                </tr>
+                                <tr style="background:#fff8f4;">
+                                    <td colspan="6" style="color:#FE7C39;font-weight:700;font-family:Arial,sans-serif;text-transform:uppercase;font-size:11px;letter-spacing:1px;">Kostnader</td>
+                                </tr>
+                                <tr>
+                                    <td>4000</td><td>Varor & material</td>
+                                    <td>1 200 000</td><td>1 145 000</td>
+                                    <td style="color:#FE7C39;">+55 000</td><td>95,4%</td>
+                                </tr>
+                                <tr>
+                                    <td>5000</td><td>Personalkostnader</td>
+                                    <td>2 100 000</td><td>2 230 000</td>
+                                    <td style="color:#000;font-weight:700;">-130 000</td><td>106,2%</td>
+                                </tr>
+                                <tr>
+                                    <td>6000</td><td>Lokalkostnader</td>
+                                    <td>240 000</td><td>220 000</td>
+                                    <td style="color:#FE7C39;">+20 000</td><td>91,7%</td>
+                                </tr>
+                                <tr>
+                                    <td>7000</td><td>Av- och nedskrivningar</td>
+                                    <td>80 000</td><td>78 500</td>
+                                    <td style="color:#FE7C39;">+1 500</td><td>98,1%</td>
+                                </tr>
+                                <tr style="background:#000;color:white;font-weight:700;">
+                                    <td style="color:white;"></td>
+                                    <td style="color:white;">Rörelseresultat (EBIT)</td>
+                                    <td style="color:white;">1 430 000</td>
+                                    <td style="color:white;">1 261 300</td>
+                                    <td style="color:#FE7C39;">-168 700</td>
+                                    <td style="color:white;">88,2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-balans">
+                <div class="card">
+                    <div class="card-header"><h3>Balansräkning – 2024-11-30</h3></div>
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead><tr><th>Konto</th><th>Benämning</th><th>Ingående</th><th>Utgående</th></tr></thead>
+                            <tbody>
+                                <tr style="background:#fff8f4;"><td colspan="4" style="color:#FE7C39;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Tillgångar</td></tr>
+                                <tr><td>1000</td><td>Inventarier</td><td>450 000</td><td>371 500</td></tr>
+                                <tr><td>1500</td><td>Kundfordringar</td><td>620 000</td><td>386 750</td></tr>
+                                <tr><td>1900</td><td>Likvida medel</td><td>980 000</td><td>1 340 200</td></tr>
+                                <tr style="background:#000;font-weight:700;"><td style="color:white;"></td><td style="color:white;">Summa tillgångar</td><td style="color:white;">2 050 000</td><td style="color:white;">2 098 450</td></tr>
+                                <tr style="background:#fff8f4;"><td colspan="4" style="color:#FE7C39;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Skulder & Eget Kapital</td></tr>
+                                <tr><td>2000</td><td>Eget kapital</td><td>900 000</td><td>1 100 000</td></tr>
+                                <tr><td>2400</td><td>Leverantörsskulder</td><td>450 000</td><td>380 000</td></tr>
+                                <tr><td>2800</td><td>Övriga skulder</td><td>700 000</td><td>618 450</td></tr>
+                                <tr style="background:#000;font-weight:700;"><td style="color:white;"></td><td style="color:white;">Summa skulder</td><td style="color:white;">2 050 000</td><td style="color:white;">2 098 450</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-kassaflode">
+                <div class="card">
+                    <div class="card-header"><h3>Kassaflödesanalys Q1–Q3 2024</h3></div>
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead><tr><th>Post</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Totalt</th></tr></thead>
+                            <tbody>
+                                <tr><td>Kassaflöde från rörelsen</td><td>312 000</td><td>298 500</td><td>445 000</td><td><strong>1 055 500</strong></td></tr>
+                                <tr><td>Investeringsverksamhet</td><td>-85 000</td><td>-42 000</td><td>-120 000</td><td><strong>-247 000</strong></td></tr>
+                                <tr><td>Finansieringsverksamhet</td><td>0</td><td>-150 000</td><td>0</td><td><strong>-150 000</strong></td></tr>
+                                <tr style="background:#000;font-weight:700;"><td style="color:white;">Netto kassaflöde</td><td style="color:white;">227 000</td><td style="color:white;">106 500</td><td style="color:white;">325 000</td><td style="color:#FE7C39;">658 500</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== FAKTUROR ===================== -->
+        <div class="page" id="page-fakturor">
+            <div class="breadcrumb">PwC Demo › <span>Fakturor</span></div>
+            <div class="page-header">
+                <div><h1>Fakturor</h1><p>Hantera kund- och leverantörsfakturor</p></div>
+                <button class="btn btn-primary" onclick="openModal('newInvoiceModal')">+ Ny faktura</button>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Totalt fakturerat (YTD)</div>
+                    <div class="kpi-value">4 872 500 kr</div>
+                    <div class="kpi-change">47 fakturor</div>
+                </div>
+                <div class="kpi-card black">
+                    <div class="kpi-label">Betalda</div>
+                    <div class="kpi-value">38 st</div>
+                    <div class="kpi-change">4 098 750 kr</div>
+                </div>
+                <div class="kpi-card light">
+                    <div class="kpi-label">Väntande</div>
+                    <div class="kpi-value">6 st</div>
+                    <div class="kpi-change">387 000 kr</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Förfallna</div>
+                    <div class="kpi-value">3 st</div>
+                    <div class="kpi-change down">386 750 kr – åtgärd krävs</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Fakturaöversikt</h3></div>
+                <div class="card-body">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Sök faktura, kund..." oninput="filterTable(this, 'invoice-table')">
+                        <select><option>Alla status</option><option>Betald</option><option>Väntande</option><option>Förfallen</option></select>
+                        <select><option>Alla kunder</option><option>Kund 1</option><option>Kund 2</option><option>Kund 3</option></select>
+                    </div>
+                    <table id="invoice-table">
+                        <thead>
+                            <tr><th>Faktura #</th><th>Datum</th><th>Förfallodag</th><th>Kund</th><th>Beskrivning</th><th>Belopp</th><th>Moms</th><th>Status</th><th>Åtgärd</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>FV-2024-047</td><td>2024-11-12</td><td>2024-12-12</td><td>Kund 1 – Nordex AB</td><td>Konsulttjänster Q4</td><td>245 000 kr</td><td>61 250 kr</td><td><span class="badge badge-success">Betald</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td></tr>
+                            <tr><td>FV-2024-046</td><td>2024-11-01</td><td>2024-11-30</td><td>Kund 3 – Apex Consulting</td><td>Årsavtal support</td><td>98 500 kr</td><td>24 625 kr</td><td><span class="badge badge-danger">Förfallen</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Påminnelse</button></td></tr>
+                            <tr><td>FV-2024-045</td><td>2024-10-25</td><td>2024-11-25</td><td>Kund 2 – Stellar Group</td><td>Projektledning fas 2</td><td>175 000 kr</td><td>43 750 kr</td><td><span class="badge badge-warning">Väntande</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td></tr>
+                            <tr><td>FV-2024-044</td><td>2024-10-18</td><td>2024-11-18</td><td>Kund 1 – Nordex AB</td><td>Workshop digitalisering</td><td>55 000 kr</td><td>13 750 kr</td><td><span class="badge badge-success">Betald</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td></tr>
+                            <tr><td>FV-2024-043</td><td>2024-10-10</td><td>2024-11-10</td><td>Kund 4 – Vega Solutions</td><td>Infrastrukturanalys</td><td>88 250 kr</td><td>22 063 kr</td><td><span class="badge badge-danger">Förfallen</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Påminnelse</button></td></tr>
+                            <tr><td>FV-2024-042</td><td>2024-10-05</td><td>2024-11-05</td><td>Kund 2 – Stellar Group</td><td>ERP-anpassning</td><td>320 000 kr</td><td>80 000 kr</td><td><span class="badge badge-success">Betald</span></td><td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;">Öppna</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== BUDGET ===================== -->
+        <div class="page" id="page-budget">
+            <div class="breadcrumb">PwC Demo › <span>Budget</span></div>
+            <div class="page-header">
+                <div><h1>Budgetuppföljning 2024</h1><p>Jämförelse budget vs utfall per avdelning</p></div>
+                <button class="btn btn-primary">+ Ny budgetrad</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Avdelningsbudget</h3></div>
+                <div class="card-body" style="padding:0;">
+                    <table>
+                        <thead><tr><th>Avdelning</th><th>Ansvarig</th><th>Budget</th><th>Utfall</th><th>Kvar</th><th>Förbrukning</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td>Konsulting</td><td>Erik Lindqvist</td>
+                                <td>2 500 000 kr</td><td>2 180 000 kr</td>
+                                <td style="color:#FE7C39;font-weight:700;">320 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:10px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:87%"></div></div><span style="font-size:12px;">87%</span></div></td>
+                            </tr>
+                            <tr>
+                                <td>IT & System</td><td>Sara Bergström</td>
+                                <td>1 800 000 kr</td><td>1 920 000 kr</td>
+                                <td style="color:#000;font-weight:700;">-120 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:10px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill black" style="width:100%"></div></div><span style="font-size:12px;font-weight:700;">107%</span></div></td>
+                            </tr>
+                            <tr>
+                                <td>Administration</td><td>Maria Karlsson</td>
+                                <td>400 000 kr</td><td>356 000 kr</td>
+                                <td style="color:#FE7C39;font-weight:700;">44 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:10px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill" style="width:89%"></div></div><span style="font-size:12px;">89%</span></div></td>
+                            </tr>
+                            <tr>
+                                <td>Försäljning</td><td>Johan Eriksson</td>
+                                <td>350 000 kr</td><td>298 000 kr</td>
+                                <td style="color:#FE7C39;font-weight:700;">52 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:10px;"><div class="progress-bar" style="width:120px;"><div class="progress-fill light" style="width:85%"></div></div><span style="font-size:12px;">85%</span></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== KUNDER ===================== -->
+        <div class="page" id="page-kunder">
+            <div class="breadcrumb">PwC Demo › <span>Kunder</span></div>
+            <div class="page-header">
+                <div><h1>Kundregister</h1><p>4 aktiva kunder</p></div>
+                <button class="btn btn-primary" onclick="openModal('newCustomerModal')">+ Lägg till kund</button>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Sök kund, org.nr, kontakt..." oninput="filterTable(this, 'customer-table')">
+                <select><option>Alla branscher</option><option>Teknik</option><option>Finans</option><option>Konsulting</option></select>
+                <select><option>Alla status</option><option>Aktiv</option><option>Inaktiv</option></select>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding:0;">
+                    <table id="customer-table">
+                        <thead>
+                            <tr><th>Kund-ID</th><th>Kundnamn</th><th>Org.nr</th><th>Kontakt</th><th>Bransch</th><th>Omsättning 2024</th><th>Aktiva projekt</th><th>Status</th><th>Åtgärd</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>K001</strong></td><td>Nordex AB</td><td>556712-3456</td>
+                                <td>Lars Nordström<br><small style="color:#666;">lars@nordex.se</small></td>
+                                <td>Teknik & Industri</td><td><strong>1 840 000 kr</strong></td>
+                                <td><span class="badge badge-info">5 projekt</span></td>
+                                <td><span class="badge badge-success">Aktiv</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="showCustomerDetail('K001')">Detaljer</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>K002</strong></td><td>Stellar Group</td><td>556834-7890</td>
+                                <td>Emma Stellarsson<br><small style="color:#666;">emma@stellar.se</small></td>
+                                <td>Finans & Rådgivning</td><td><strong>1 240 000 kr</strong></td>
+                                <td><span class="badge badge-info">4 projekt</span></td>
+                                <td><span class="badge badge-success">Aktiv</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="showCustomerDetail('K002')">Detaljer</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>K003</strong></td><td>Apex Consulting</td><td>556923-1234</td>
+                                <td>Peter Apexsson<br><small style="color:#666;">peter@apex.se</small></td>
+                                <td>Management Consulting</td><td><strong>890 000 kr</strong></td>
+                                <td><span class="badge badge-info">3 projekt</span></td>
+                                <td><span class="badge badge-success">Aktiv</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="showCustomerDetail('K003')">Detaljer</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>K004</strong></td><td>Vega Solutions</td><td>556645-9012</td>
+                                <td>Sofia Vegaström<br><small style="color:#666;">sofia@vega.se</small></td>
+                                <td>IT & Mjukvara</td><td><strong>502 500 kr</strong></td>
+                                <td><span class="badge badge-info">2 projekt</span></td>
+                                <td><span class="badge badge-warning">Granskas</span></td>
+                                <td><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="showCustomerDetail('K004')">Detaljer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== PROJEKT ===================== -->
+        <div class="page" id="page-projekt">
+            <div class="breadcrumb">PwC Demo › <span>Projekt</span></div>
+            <div class="page-header">
+                <div><h1>Projektöversikt</h1><p>14 aktiva projekt</p></div>
+                <button class="btn btn-primary" onclick="openModal('newProjectModal')">+ Nytt projekt</button>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">Aktiva projekt</div><div class="kpi-value">14</div><div class="kpi-change">3 avslutas i dec</div></div>
+                <div class="kpi-card black"><div class="kpi-label">Avslutade 2024</div><div class="kpi-value">22</div><div class="kpi-change">↑ vs 18 förra året</div></div>
+                <div class="kpi-card light"><div class="kpi-label">Total projektbudget</div><div class="kpi-value">8 450 000 kr</div><div class="kpi-change">Aktiva projekt</div></div>
+                <div class="kpi-card"><div class="kpi-label">Försenade projekt</div><div class="kpi-value">2</div><div class="kpi-change down">Åtgärd krävs</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Projektlista</h3></div>
+                <div class="card-body" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr><th>Projekt-ID</th><th>Projektnamn</th><th>Kund</th><th>PM</th><th>Start</th><th>Slut</th><th>Budget</th><th>Förbrukat</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>PRJ-2024-01</strong></td><td>Digital Transformation</td><td>Nordex AB</td><td>Erik L.</td>
+                                <td>2024-01-15</td><td>2024-12-31</td><td>1 200 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:72%"></div></div><span style="font-size:12px;">72%</span></div></td>
+                                <td><span class="badge badge-success">På spår</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>PRJ-2024-02</strong></td><td>ERP-implementering</td><td>Stellar Group</td><td>Sara B.</td>
+                                <td>2024-03-01</td><td>2025-03-01</td><td>2 400 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;"><div class="progress-fill black" style="width:45%"></div></div><span style="font-size:12px;">45%</span></div></td>
+                                <td><span class="badge badge-warning">Försenad</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>PRJ-2024-03</strong></td><td>Processkartläggning</td><td>Apex Consulting</td><td>Maria K.</td>
+                                <td>2024-06-01</td><td>2024-11-30</td><td>450 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:98%"></div></div><span style="font-size:12px;">98%</span></div></td>
+                                <td><span class="badge badge-info">Avslutas</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>PRJ-2024-04</strong></td><td>Cybersäkerhetsanalys</td><td>Vega Solutions</td><td>Johan E.</td>
+                                <td>2024-09-01</td><td>2025-02-28</td><td>680 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;"><div class="progress-fill light" style="width:35%"></div></div><span style="font-size:12px;">35%</span></div></td>
+                                <td><span class="badge badge-success">På spår</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>PRJ-2024-05</strong></td><td>Hållbarhetsrapportering</td><td>Nordex AB</td><td>Anna J.</td>
+                                <td>2024-08-15</td><td>2024-12-15</td><td>320 000 kr</td>
+                                <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;"><div class="progress-fill black" style="width:88%"></div></div><span style="font-size:12px;">88%</span></div></td>
+                                <td><span class="badge badge-warning">Risk</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== RAPPORTER ===================== -->
+        <div class="page" id="page-rapporter">
+            <div class="breadcrumb">PwC Demo › <span>Rapporter</span></div>
+            <div class="page-header">
+                <div><h1>Rapporter</h1><p>Generera och exportera rapporter</p></div>
+                <button class="btn btn-primary">Schemalägg rapport</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+                <div class="report-card" onclick="showNotification('Resultatrapport genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">📊</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Resultatrapport</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">Månadsvis P&L rapport</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+                <div class="report-card" onclick="showNotification('Kundanalys genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">👥</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Kundanalys</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">Kundlönsamhet & aktivitet</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+                <div class="report-card" onclick="showNotification('Projektrapport genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">📁</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Projektrapport</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">Status & budgetutfall</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+                <div class="report-card" onclick="showNotification('Likviditetsrapport genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">💵</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Likviditetsrapport</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">Kassaflöde & prognos</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+                <div class="report-card" onclick="showNotification('Budgetavvikelserapport genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">📈</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Budgetavvikelse</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">Budget vs faktiskt utfall</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+                <div class="report-card" onclick="showNotification('Momsrapport genereras...')">
+                    <div class="card-body" style="text-align:center;padding:30px;">
+                        <div style="font-size:36px;margin-bottom:12px;">🧮</div>
+                        <h3 style="font-family:Georgia,serif;margin-bottom:6px;">Momsrapport</h3>
+                        <p style="font-size:12px;color:#666;font-family:Arial,sans-serif;margin-bottom:18px;">In- och utgående moms</p>
+                        <button class="btn btn-primary" style="width:100%;">Generera</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== ANALYS ===================== -->
+        <div class="page" id="page-analys">
+            <div class="breadcrumb">PwC Demo › <span>Analys</span></div>
+            <div class="page-header">
+                <div><h1>Affärsanalys</h1><p>Nyckeltal och trender</p></div>
+            </div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><h3>Lönsamhet per kund</h3></div>
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead><tr><th>Kund</th><th>Intäkt</th><th>Kostnad</th><th>Marginal</th></tr></thead>
+                            <tbody>
+                                <tr><td>Nordex AB</td><td>1 840 000</td><td>1 250 000</td><td style="color:#FE7C39;font-weight:700;">32,1%</td></tr>
+                                <tr><td>Stellar Group</td><td>1 240 000</td><td>890 000</td><td style="color:#FE7C39;font-weight:700;">28,2%</td></tr>
+                                <tr><td>Apex Consulting</td><td>890 000</td><td>680 000</td><td style="color:#000;font-weight:700;">23,6%</td></tr>
+                                <tr><td>Vega Solutions</td><td>502 500</td><td>430 000</td><td style="color:#000;font-weight:700;">14,4%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>KPI Sammanfattning</h3></div>
+                    <div class="card-body">
+                        <div style="display:flex;flex-direction:column;gap:16px;">
+                            <div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;"><span>Kundnöjdhet (NPS)</span><strong style="color:#FE7C39;">72</strong></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width:72%"></div></div>
+                            </div>
+                            <div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;"><span>Debiteringsgrad</span><strong>84%</strong></div>
+                                <div class="progress-bar"><div class="progress-fill black" style="width:84%"></div></div>
+                            </div>
+                            <div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;"><span>Budgetföljsamhet</span><strong>91%</strong></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div>
+                            </div>
+                            <div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;font-family:Arial,sans-serif;"><span>Projektleverans i tid</span><strong>78%</strong></div>
+                                <div class="progress-bar"><div class="progress-fill light" style="width:78%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== INSTÄLLNINGAR ===================== -->
+        <div class="page" id="page-installningar">
+            <div class="breadcrumb">PwC Demo › <span>Inställningar</span></div>
+            <div class="page-header"><div><h1>Systeminställningar</h1><p>Hantera användare, behörigheter och systemkonfiguration</p></div></div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><h3>Användare</h3></div>
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead><tr><th>Namn</th><th>Roll</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr><td>Anna Johansson</td><td>Systemadmin</td><td><span class="badge badge-success">Aktiv</span></td></tr>
+                                <tr><td>Erik Lindqvist</td><td>Projektledare</td><td><span class="badge badge-success">Aktiv</span></td></tr>
+                                <tr><td>Sara Bergström</td><td>Ekonomichef</td><td><span class="badge badge-success">Aktiv</span></td></tr>
+                                <tr><td>Johan Eriksson</td><td>Säljare</td><td><span class="badge badge-warning">Granskas</span></td></tr>
+                                <tr><td>Maria Karlsson</td><td>Controller</td><td><span class="badge badge-success">Aktiv</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Systeminformation</h3></div>
+                    <div class="card-body">
+                        <div style="display:flex;flex-direction:column;gap:12px;font-size:13px;font-family:Arial,sans-serif;">
+                            <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #eee;"><span style="color:#666;">System</span><strong>PwC Demo v4.2.1</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #eee;"><span style="color:#666;">Program</span><strong>Controllerprogrammet 2026</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #eee;"><span style="color:#666;">Räkenskapsår</span><strong>2024-01-01 – 2024-12-31</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #eee;"><span style="color:#666;">Valuta</span><strong>SEK (kr)</strong></div>
+                            <div style="display:flex;justify-content:space-between;"><span style="color:#666;">Senaste backup</span><strong style="color:#FE7C39;">Idag 03:00 ✓</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Ny Order -->
+<div class="modal-overlay" id="newOrderModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Skapa ny order</h3>
+            <button class="modal-close" onclick="closeModal('newOrderModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group"><label>Kund *</label><select><option>Välj kund...</option><option>Kund 1 – Nordex AB</option><option>Kund 2 – Stellar Group</option><option>Kund 3 – Apex Consulting</option><option>Kund 4 – Vega Solutions</option></select></div>
+                <div class="form-group"><label>Ordertyp</label><select><option>Konsulttjänst</option><option>Produkt</option><option>Projekt</option><option>Support</option></select></div>
+                <div class="form-group"><label>Beskrivning *</label><input type="text" placeholder="Ange beskrivning..."></div>
+                <div class="form-group"><label>Belopp (kr) *</label><input type="number" placeholder="0"></div>
+                <div class="form-group"><label>Orderdatum</label><input type="date" value="2024-11-13"></div>
+                <div class="form-group"><label>Leveransdatum</label><input type="date"></div>
+                <div class="form-group"><label>Projektledare</label><select><option>Anna Johansson</option><option>Erik Lindqvist</option><option>Sara Bergström</option><option>Johan Eriksson</option></select></div>
+                <div class="form-group"><label>Prioritet</label><select><option>Normal</option><option>Hög</option><option>Kritisk</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('newOrderModal')">Avbryt</button>
+            <button class="btn btn-primary" onclick="saveAndClose('newOrderModal', 'Order skapad!')">Spara order</button>
+        </div>
+    </div>
+</div>
+
+<!-- Ny Faktura -->
+<div class="modal-overlay" id="newInvoiceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Skapa ny faktura</h3>
+            <button class="modal-close" onclick="closeModal('newInvoiceModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group"><label>Kund *</label><select><option>Välj kund...</option><option>Kund 1 – Nordex AB</option><option>Kund 2 – Stellar Group</option><option>Kund 3 – Apex Consulting</option><option>Kund 4 – Vega Solutions</option></select></div>
+                <div class="form-group"><label>Fakturadatum *</label><input type="date" value="2024-11-13"></div>
+                <div class="form-group"><label>Förfallodag *</label><input type="date"></div>
+                <div class="form-group"><label>Betalningsvillkor</label><select><option>30 dagar</option><option>14 dagar</option><option>Omgående</option><option>60 dagar</option></select></div>
+                <div class="form-group" style="grid-column:span 2;"><label>Beskrivning *</label><input type="text" placeholder="Fakturabeskrivning..."></div>
+                <div class="form-group"><label>Belopp ex. moms (kr) *</label><input type="number" placeholder="0"></div>
+                <div class="form-group"><label>Momssats</label><select><option>25%</option><option>12%</option><option>6%</option><option>0%</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('newInvoiceModal')">Avbryt</button>
+            <button class="btn btn-primary" onclick="saveAndClose('newInvoiceModal', 'Faktura skapad!')">Skapa faktura</button>
+        </div>
+    </div>
+</div>
+
+<!-- Ny Kund -->
+<div class="modal-overlay" id="newCustomerModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Lägg till ny kund</h3>
+            <button class="modal-close" onclick="closeModal('newCustomerModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group"><label>Företagsnamn *</label><input type="text" placeholder="Företagets namn"></div>
+                <div class="form-group"><label>Organisationsnummer *</label><input type="text" placeholder="556XXX-XXXX"></div>
+                <div class="form-group"><label>Kontaktperson</label><input type="text" placeholder="Namn"></div>
+                <div class="form-group"><label>E-post</label><input type="email" placeholder="email@foretag.se"></div>
+                <div class="form-group"><label>Telefon</label><input type="text" placeholder="+46..."></div>
+                <div class="form-group"><label>Bransch</label><select><option>Välj bransch...</option><option>Teknik & Industri</option><option>Finans & Rådgivning</option><option>IT & Mjukvara</option><option>Management Consulting</option><option>Övrigt</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('newCustomerModal')">Avbryt</button>
+            <button class="btn btn-primary" onclick="saveAndClose('newCustomerModal', 'Kund tillagd!')">Spara kund</button>
+        </div>
+    </div>
+</div>
+
+<!-- Nytt Projekt -->
+<div class="modal-overlay" id="newProjectModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Skapa nytt projekt</h3>
+            <button class="modal-close" onclick="closeModal('newProjectModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group" style="grid-column:span 2;"><label>Projektnamn *</label><input type="text" placeholder="Projektets namn"></div>
+                <div class="form-group"><label>Kund *</label><select><option>Välj kund...</option><option>Kund 1 – Nordex AB</option><option>Kund 2 – Stellar Group</option><option>Kund 3 – Apex Consulting</option><option>Kund 4 – Vega Solutions</option></select></div>
+                <div class="form-group"><label>Projektledare</label><select><option>Anna Johansson</option><option>Erik Lindqvist</option><option>Sara Bergström</option><option>Johan Eriksson</option></select></div>
+                <div class="form-group"><label>Startdatum *</label><input type="date" value="2024-11-13"></div>
+                <div class="form-group"><label>Slutdatum *</label><input type="date"></div>
+                <div class="form-group"><label>Budget (kr) *</label><input type="number" placeholder="0"></div>
+                <div class="form-group"><label>Projekttyp</label><select><option>Fastpris</option><option>Löpande räkning</option><option>Ramavtal</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('newProjectModal')">Avbryt</button>
+            <button class="btn btn-primary" onclick="saveAndClose('newProjectModal', 'Projekt skapat!')">Skapa projekt</button>
+        </div>
+    </div>
+</div>
+
+<!-- Kunddetaljer -->
+<div class="modal-overlay" id="customerDetailModal">
+    <div class="modal" style="width:620px;">
+        <div class="modal-header">
+            <h3 id="customerDetailTitle">Kunddetaljer</h3>
+            <button class="modal-close" onclick="closeModal('customerDetailModal')">×</button>
+        </div>
+        <div class="modal-body" id="customerDetailBody"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('customerDetailModal')">Stäng</button>
+            <button class="btn btn-primary">Redigera kund</button>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification">✓ Åtgärd genomförd!</div>
+
+<script>
+    const customerData = {
+        K001: { name:"Nordex AB", org:"556712-3456", contact:"Lars Nordström", email:"lars@nordex.se", phone:"+46 8 123 456 78", address:"Industrivägen 14, 112 45 Stockholm", revenue:"1 840 000 kr", projects:5, invoices:18, nps:82 },
+        K002: { name:"Stellar Group", org:"556834-7890", contact:"Emma Stellarsson", email:"emma@stellar.se", phone:"+46 31 987 654 32", address:"Kungsgatan 22, 411 19 Göteborg", revenue:"1 240 000 kr", projects:4, invoices:12, nps:74 },
+        K003: { name:"Apex Consulting", org:"556923-1234", contact:"Peter Apexsson", email:"peter@apex.se", phone:"+46 40 555 333 22", address:"Stortorget 8, 211 34 Malmö", revenue:"890 000 kr", projects:3, invoices:9, nps:68 },
+        K004: { name:"Vega Solutions", org:"556645-9012", contact:"Sofia Vegaström", email:"sofia@vega.se", phone:"+46 18 444 222 11", address:"Teknikparken 3, 751 83 Uppsala", revenue:"502 500 kr", projects:2, invoices:8, nps:61 }
+    };
+
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll('.topbar-nav a').forEach(a => a.classList.remove('active'));
+        const pageEl = document.getElementById('page-' + page);
+        if (pageEl) pageEl.classList.add('active');
+        const sideEl = document.getElementById('side-' + page);
+        if (sideEl) sideEl.classList.add('active');
+        const navEl = document.getElementById('nav-' + page);
+        if (navEl) navEl.classList.add('active');
+    }
+
+    function switchTab(el, tabId) {
+        const parent = el.closest('.page') || document;
+        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function saveAndClose(modalId, message) {
+        closeModal(modalId);
+        showNotification(message);
+    }
+
+    function showNotification(msg) {
+        const notif = document.getElementById('notification');
+        notif.textContent = '✓ ' + msg;
+        notif.style.display = 'block';
+        setTimeout(() => { notif.style.display = 'none'; }, 3000);
+    }
+
+    function filterTable(input, tableId) {
+        const filter = input.value.toLowerCase();
+        document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    }
+
+    function showCustomerDetail(id) {
+        const c = customerData[id];
+        if (!c) return;
+        document.getElementById('customerDetailTitle').textContent = c.name;
+        document.getElementById('customerDetailBody').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;font-size:13px;font-family:Arial,sans-serif;">
+                <div><strong style="color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Org.nr</strong><p style="margin-top:4px;">${c.org}</p></div>
+                <div><strong style="color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Kontaktperson</strong><p style="margin-top:4px;">${c.contact}</p></div>
+                <div><strong style="color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">E-post</strong><p style="margin-top:4px;color:#FE7C39;">${c.email}</p></div>
+                <div><strong style="color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Telefon</strong><p style="margin-top:4px;">${c.phone}</p></div>
+                <div style="grid-column:span 2;"><strong style="color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Adress</strong><p style="margin-top:4px;">${c.address}</p></div>
+                <div style="grid-column:span 2;padding:15px;background:#f5f5f5;border-top:3px solid #FE7C39;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+                    <div><div style="font-size:18px;font-weight:700;color:#FE7C39;font-family:Georgia,serif;">${c.revenue}</div><div style="font-size:11px;color:#666;margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;">Omsättning 2024</div></div>
+                    <div><div style="font-size:18px;font-weight:700;color:#000;font-family:Georgia,serif;">${c.projects}</div><div style="font-size:11px;color:#666;margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;">Aktiva projekt</div></div>
+                    <div><div style="font-size:18px;font-weight:700;color:#FE7C39;font-family:Georgia,serif;">${c.nps}</div><div style="font-size:11px;color:#666;margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;">NPS-score</div></div>
+                </div>
+            </div>`;
+        openModal('customerDetailModal');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('open');
+        });
+    });
+</script>
+</body>
+</html>
